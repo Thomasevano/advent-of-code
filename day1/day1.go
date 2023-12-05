@@ -5,9 +5,22 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"strconv"
-	"unicode"
+	"strings"
 )
+
+var letterDigitsToNumeric = map[string]string{
+	"one":   "1",
+	"two":   "2",
+	"three": "3",
+	"four":  "4",
+	"five":  "5",
+	"six":   "6",
+	"seven": "7",
+	"eight": "8",
+	"nine":  "9",
+}
 
 func LinesInFile(fileName string) []string {
 	f, err := os.Open(fileName)
@@ -30,21 +43,36 @@ func LinesInFile(fileName string) []string {
 	return result
 }
 
-func GetDigits(line string) string {
-	var result string
-	for _, char := range line {
-		if unicode.IsDigit(char) {
-			result += string(char)
-		}
-	}
+func GetDigits(line string) []string {
+	r := strings.NewReplacer("one", "o1e", "two", "t2o", "three", "t3e", "four",
+		"f4r", "five", "f5e", "six", "s6x", "seven", "s7n", "eight", "e8t", "nine", "n9e")
+	correctedLine := r.Replace(line)
+
+	digitsRegex := regexp.MustCompile(`([0-9]|one|two|three|four|five|six|seven|eight|nine)`)
+	matches := digitsRegex.FindAllString(correctedLine, -1)
+
+	result := GetFirstAndLastDigit(matches)
+
 	return result
 }
 
-func GetFirstAndLastDigit(stringsOfDigits string) int {
-	var finalString string
-	finalString = stringsOfDigits[0:1] + stringsOfDigits[len(stringsOfDigits)-1:]
-	digits, _ := strconv.Atoi(finalString)
-	return digits
+func ConvertStringDigitToNumeric(digit string) string {
+	var numericDigit string
+	isDigitNumber := regexp.MustCompile(`\d`).MatchString(digit)
+
+	if !isDigitNumber {
+		numericDigit += letterDigitsToNumeric[digit]
+	} else {
+		numericDigit += digit
+	}
+
+	return numericDigit
+}
+
+func GetFirstAndLastDigit(digits []string) []string {
+	var slice []string
+	slice = append(slice, digits[0], digits[len(digits)-1])
+	return slice
 }
 
 func sum(arr []int) int {
@@ -55,13 +83,23 @@ func sum(arr []int) int {
 	return sum
 }
 
-func Main() int {
-	sliceOfLine := LinesInFile("day1/input.txt")
+func Main(filePath string) {
+	sliceOfLine := LinesInFile(filePath)
 	var array []int
+	var numericDigits string
+	var intDigits int
+
 	for _, element := range sliceOfLine {
-		array = append(array, GetFirstAndLastDigit(GetDigits(element)))
+		digitsArray := make([]string, 0, 2)
+
+		for _, digit := range GetDigits(element) {
+			digitsArray = append(digitsArray, ConvertStringDigitToNumeric(digit))
+			numericDigits = strings.Join(digitsArray, "")
+			number, _ := strconv.Atoi(numericDigits)
+			intDigits = number
+		}
+		array = append(array, intDigits)
 	}
 	result := sum(array)
 	fmt.Println(result)
-	return result
 }
