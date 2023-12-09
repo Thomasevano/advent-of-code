@@ -57,25 +57,42 @@ func GetMapFromSubsets(colorCubesOfSubset []string) map[string]int {
 
 func Main(filePath string) {
 	sliceOfLine := LinesInFile(filePath)
-	var gameIdSum int
+	var power int
+	var sumOfPower int
 
-	for index, line := range sliceOfLine {
-		isGameValid := true
+	for _, line := range sliceOfLine {
+		//isGameValid := true
 		subsets := GetSubsets(line)
+
+		fewestNbOfDicesOfEachColor := map[string]int{
+			"blue":  1,
+			"green": 1,
+			"red":   1,
+		}
 
 		for _, subset := range subsets {
 			colorCubesOfSubset := strings.Split(subset, ",")
 
 			diceOfColor := GetMapFromSubsets(colorCubesOfSubset)
 
-			invalidGame := diceOfColor["red"] > 12 || diceOfColor["green"] > 13 || diceOfColor["blue"] > 14
-			if invalidGame {
-				isGameValid = false
+			//invalidGame := diceOfColor["red"] > 12 || diceOfColor["green"] > 13 || diceOfColor["blue"] > 14
+			//if invalidGame {
+			//	isGameValid = false
+			//}
+
+			if diceOfColor["green"] > fewestNbOfDicesOfEachColor["green"] && diceOfColor["green"] != 0 {
+				fewestNbOfDicesOfEachColor["green"] = diceOfColor["green"]
+			}
+			if diceOfColor["blue"] > fewestNbOfDicesOfEachColor["blue"] && diceOfColor["blue"] != 0 {
+				fewestNbOfDicesOfEachColor["blue"] = diceOfColor["blue"]
+			}
+			if diceOfColor["red"] > fewestNbOfDicesOfEachColor["red"] && diceOfColor["red"] != 0 {
+				fewestNbOfDicesOfEachColor["red"] = diceOfColor["red"]
 			}
 		}
-		if isGameValid {
-			gameIdSum += index + 1
-		}
+
+		power = fewestNbOfDicesOfEachColor["green"] * fewestNbOfDicesOfEachColor["blue"] * fewestNbOfDicesOfEachColor["red"]
+		sumOfPower += power
 	}
-	fmt.Println(gameIdSum)
+	fmt.Println(sumOfPower)
 }
