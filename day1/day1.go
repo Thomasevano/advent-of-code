@@ -1,10 +1,8 @@
 package day1
 
 import (
-	"bufio"
 	"fmt"
-	"log"
-	"os"
+	"github.com/thomasevano/advent-of-code/utils"
 	"regexp"
 	"strconv"
 	"strings"
@@ -20,27 +18,6 @@ var letterDigitsToNumeric = map[string]string{
 	"seven": "7",
 	"eight": "8",
 	"nine":  "9",
-}
-
-func LinesInFile(fileName string) []string {
-	f, err := os.Open(fileName)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
-	// Create new Scanner.
-	scanner := bufio.NewScanner(f)
-	result := []string{}
-	// Use Scan.
-	for scanner.Scan() {
-		line := scanner.Text()
-		// Append line to result.
-		result = append(result, line)
-	}
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
-	return result
 }
 
 func GetDigits(line string) []string {
@@ -84,7 +61,7 @@ func sum(arr []int) int {
 }
 
 func Main(filePath string) {
-	sliceOfLine := LinesInFile(filePath)
+	sliceOfLine := utils.LinesInFile(filePath)
 	var array []int
 	var numericDigits string
 	var intDigits int

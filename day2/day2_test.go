@@ -2,11 +2,9 @@ package day2_test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/thomasevano/2023-advent-of-code/day2"
+	"github.com/thomasevano/advent-of-code/day2"
 	"testing"
 )
-
-// RULES: Determine which games would have been possible with only 12 red cubes, 13 green cubes, and 14 blue cubes
 
 func TestGetSubsets(t *testing.T) {
 	tests := []struct {
