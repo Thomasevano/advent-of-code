@@ -17,10 +17,10 @@ type NumberCoords struct {
 	Coords     Coordinates
 }
 
-var partNumbers []int
+var partNumbers = map[Coordinates][]int{}
 var numbers = map[NumberCoords]string{}
 var symbolsCoords = map[Coordinates]string{}
-var part1 = 0
+var part1, part2 = 0, 0
 
 func GetSymbols(sliceOfLine []string) map[Coordinates]string {
 	for sliceIndex, line := range sliceOfLine {
@@ -70,12 +70,20 @@ func Main(filePath string) int {
 			number, _ := strconv.Atoi(numbers[numbersCoordsWithLineNumber])
 			for cellCoord := range adjacentCells {
 				if _, ok := symbolsCoords[cellCoord]; ok {
-					partNumbers = append(partNumbers, number)
+					partNumbers[cellCoord] = append(partNumbers[cellCoord], number)
 					part1 += number
 				}
 			}
 		}
 	}
+	for symbolCoords, digits := range partNumbers {
+		if symbolsCoords[symbolCoords] == "'*'" && len(digits) == 2 {
+			part2 += digits[0] * digits[1]
+		}
+	}
+	fmt.Println(partNumbers)
 	fmt.Printf("Part 1: %d \n", part1)
-	return part1
+	fmt.Printf("Part 2: %d \n", part2)
+	//return part1, part2
+	return part2
 }
