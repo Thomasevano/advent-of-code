@@ -1,8 +1,6 @@
 package main
 
-import (
-	"github.com/thomasevano/advent-of-code/day4"
-)
+import "github.com/thomasevano/advent-of-code/day4"
 
 func main() {
 	//day1.Main("day1/input.txt")

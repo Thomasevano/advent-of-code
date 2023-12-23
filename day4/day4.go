@@ -8,14 +8,14 @@ import (
 	"strings"
 )
 
-var cards = map[string]map[string][]int{}
-var part1 = 0
+var cardsSlice []map[string][]int
+var part1, part2 = 0, 0
+var cardsCount = map[int]int{}
 
-func SplitNumbers(line string) map[string]map[string][]int {
-
+func SplitNumbers(line string) []map[string][]int {
 	subset := strings.SplitAfter(line, ":")
-	gameNumber := subset[0]
-	gameNumber = gameNumber[0 : len(gameNumber)-1]
+	cardNumber := subset[0]
+	cardNumber = cardNumber[0 : len(cardNumber)-1]
 
 	subset = strings.SplitAfter(subset[1], "|")
 
@@ -28,8 +28,8 @@ func SplitNumbers(line string) map[string]map[string][]int {
 		"numbers you have": numbersIHave,
 	}
 
-	cards[gameNumber] = numbers
-	return cards
+	cardsSlice = append(cardsSlice, numbers)
+	return cardsSlice
 }
 
 func TrimStringNumbers(numbers string) []string {
@@ -64,8 +64,10 @@ func Day4(filePath string) int {
 		SplitNumbers(line)
 	}
 
-	for _, card := range cards {
+	for cardIndex, card := range cardsSlice {
 		matchPoints := 0
+		matchedNumbers := 0
+		cardsCount[cardIndex+1] += 1
 		for _, number := range card["numbers you have"] {
 			if slices.Contains(card["winning numbers"], number) {
 				if matchPoints == 0 {
@@ -73,10 +75,24 @@ func Day4(filePath string) int {
 				} else {
 					matchPoints = matchPoints * 2
 				}
+				matchedNumbers += 1
 			}
 		}
+		fmt.Printf("Card: %d with Matched numbers: %d \n", cardIndex+1, matchedNumbers)
+		if matchedNumbers > 0 {
+			for i := 0; i < matchedNumbers; i++ {
+				if cardIndex == 0 {
+					cardsCount[cardIndex+1+i+1] += 1
+				} else {
+					cardsCount[cardIndex+1+i+1] += cardsCount[cardIndex+1]
+				}
+			}
+		}
+		part2 += cardsCount[cardIndex+1]
 		part1 += matchPoints
-		fmt.Println(part1)
 	}
+
+	fmt.Println(part1)
+	fmt.Println(part2)
 	return part1
 }

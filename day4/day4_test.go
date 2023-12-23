@@ -37,9 +37,14 @@ func TestDay4(t *testing.T) {
 		want int
 	}{
 		{
-			name: "it return sum of match points for all the cards",
+			name: "it return sum of match points for all the cards in example.txt",
 			args: "example.txt",
 			want: 13,
+		},
+		{
+			name: "it return sum of match points for all the cards in example.txt",
+			args: "input.txt",
+			want: 21821,
 		},
 	}
 	for _, tt := range tests {
