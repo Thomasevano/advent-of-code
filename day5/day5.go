@@ -2,9 +2,10 @@ package day5
 
 import (
 	"fmt"
-	"github.com/thomasevano/advent-of-code/utils"
 	"strconv"
 	"strings"
+
+	"github.com/thomasevano/advent-of-code/utils"
 )
 
 func ExtractSeeds(mapSlice []string) []int {
@@ -86,16 +87,34 @@ func Day5(filePath string) {
 	mapSlice := strings.Split(fileContent, "\n\n")
 	seeds := ExtractSeeds(mapSlice)
 
+	var newSeeds []int
+	for index := range seeds {
+		if index%2 == 0 {
+			// fmt.Println(seeds[index])
+			for i := 0; i < seeds[index+1]; i++ {
+				newSeeds = append(newSeeds, seeds[index]+i)
+			}
+		}
+	}
+	fmt.Printf("newSeeds length: %d \n", len(newSeeds))
+
 	mapSlice = mapSlice[1:]
 	maps := GetNumbersForEachMap(mapSlice)
 	data := ConvertMapDataToInt(maps)
 
-	for _, seed := range seeds {
-		locationNumber := GetSeedLocationNumber(seed, data)
+	//for _, seed := range seeds {
+	//	locationNumber := GetSeedLocationNumber(seed, data)
+	//
+	//	if lowestLocationNumber == 0 || locationNumber < lowestLocationNumber {
+	//		lowestLocationNumber = locationNumber
+	//	}
+	//}
 
+	for _, newSeed := range newSeeds {
+		locationNumber := GetSeedLocationNumber(newSeed, data)
 		if lowestLocationNumber == 0 || locationNumber < lowestLocationNumber {
 			lowestLocationNumber = locationNumber
 		}
 	}
-	fmt.Println(lowestLocationNumber)
+	fmt.Printf("lowestLocationNumber: %d \n", lowestLocationNumber)
 }
