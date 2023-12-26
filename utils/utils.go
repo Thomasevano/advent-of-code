@@ -21,7 +21,6 @@ func LinesInFile(fileName string) []string {
 		line := scanner.Text()
 		// Append line to result.
 		result = append(result, line)
-		fmt.Println(line)
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
