@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"log"
 	"os"
 )
@@ -39,4 +40,12 @@ func FileToString(filePath string) string {
 	content := string(contentBytes)
 
 	return content
+}
+
+type dummyt struct{}
+
+func (t dummyt) Errorf(string, ...interface{}) {}
+
+func ElementsMatch(listA, listB interface{}) bool {
+	return assert.ElementsMatch(dummyt{}, listA, listB)
 }
