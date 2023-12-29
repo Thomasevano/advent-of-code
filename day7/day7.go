@@ -23,7 +23,7 @@ var CharToIntValue = map[string]int{
 	"A": 14,
 	"K": 13,
 	"Q": 12,
-	"J": 11,
+	"J": 1,
 	"T": 10,
 	"9": 9,
 	"8": 8,
@@ -36,22 +36,25 @@ var CharToIntValue = map[string]int{
 }
 
 type Hand struct {
-	Cards         string
-	Bid           int
-	NumberOfChars []int
-	Type          string
-	CardsValue    []int
+	Cards            string
+	Bid              int
+	NumberOfChars    []int
+	Type             string
+	CardsValue       []int
+	CountForEachChar map[string]int
 }
 
 func main() {
-	// should return 6440
+	// should return Part1: 6440
+	// should return Part1: 5905
 	//data := utils.LinesInFile("aoc-example.txt")
 	// should return part 1: 1343
 	//data := utils.LinesInFile("example.txt")
 	// should return part 1: 6592
 	// should return Part 2: 6839
 	//data := utils.LinesInFile("example1.txt")
-	// should return 248559379
+	// should return Part 1: 248559379
+	// should return Part 2: 249631254
 	data := utils.LinesInFile("input.txt")
 	hands, handsWithSameType := getHandData(data)
 
@@ -83,14 +86,18 @@ func getHandData(data []string) ([]Hand, map[string][]int) {
 		hand.Cards, hand.Bid = getHandCardAndBid(handWithBid)
 		hand.NumberOfChars = []int{}
 
-		countForEachChar := make(map[rune]int)
+		countForEachChar := make(map[string]int)
 		for _, card := range hand.Cards {
 			hand.CardsValue = append(hand.CardsValue, CharToIntValue[string(card)])
-			countForEachChar[card]++
+			countForEachChar[string(card)]++
 		}
-		for _, count := range countForEachChar {
-			hand.NumberOfChars = append(hand.NumberOfChars, count)
+		hand.CountForEachChar = countForEachChar
+		for char, count := range countForEachChar {
+			if char != "J" {
+				hand.NumberOfChars = append(hand.NumberOfChars, count)
+			}
 		}
+		fmt.Println(hand)
 		hand.Type = determineType(hand)
 
 		handsWithSameType[hand.Type] = append(handsWithSameType[hand.Type], handIndex)
@@ -108,6 +115,21 @@ func getHandCardAndBid(handWithBid string) (string, int) {
 }
 
 func determineType(hand Hand) string {
+	if strings.Contains(hand.Cards, "J") {
+		if len(hand.NumberOfChars) > 0 {
+			maxValue := slices.Max(hand.NumberOfChars)
+			numberOfJoker := strings.Count(hand.Cards, "J")
+			for i, charNumbers := range hand.NumberOfChars {
+				if charNumbers == maxValue {
+					hand.NumberOfChars[i] += numberOfJoker
+					break
+				}
+			}
+		} else {
+			maxValue := hand.CountForEachChar["J"]
+			hand.NumberOfChars = append(hand.NumberOfChars, maxValue)
+		}
+	}
 	switch {
 	case utils.ElementsMatch(fiveOfAKind, hand.NumberOfChars):
 		return "fiveOfAKind"
